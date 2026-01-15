@@ -18,7 +18,7 @@ export default function SearchPage() {
     const timeout = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await api.get(`/manga/mangakakalot/${encodeURIComponent(query)}`);
+        const res = await api.get(`/manga/mangapill/${query}`);
         setSuggestions(res.data.results || []);
       } catch (err) {
         console.error(err);
@@ -44,9 +44,14 @@ export default function SearchPage() {
       {loading && <div className="text-purple-500 mb-4">Searching...</div>}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {suggestions.map((manga) => (
-          <MangaCard key={manga.id} manga={manga} />
-        ))}
+        {suggestions.map((manga) => {
+          const id = manga.mangaId ?? manga.id;
+
+          if (!id) return null;
+
+          return <MangaCard key={id} manga={manga} />;
+        })}
+        
         {!loading && query && suggestions.length === 0 && (
           <div className="text-gray-400 col-span-full text-center">No results found.</div>
         )}

@@ -5,7 +5,7 @@ import MangaCard from '@/components/MangaCard';
 import { useState, useEffect } from 'react';
 
 async function getLatestManga(page = 1) {
-  const res = await api.get('/manga/mangakakalot/latestmanga', { params: { page } });
+  const res = await api.get('/manga/mangapill/featured', { params: { page } });
   return res.data;
 }
 

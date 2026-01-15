@@ -1,35 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server';
-import fetch from 'node-fetch';
+import { NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
-  const url = req.nextUrl.searchParams.get('url');
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const url = searchParams.get('url');
 
   if (!url) {
-    return NextResponse.json({ error: 'Missing url query parameter' }, { status: 400 });
+    return new NextResponse('Missing url', { status: 400 });
   }
 
   try {
     const res = await fetch(url, {
       headers: {
+        // REQUIRED to bypass 2xstorage hotlink protection
         'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
-        Referer: 'https://mangakakalot.com/',
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Referer': 'https://www.mangapill.com/',
+        'Accept': 'image/webp,image/*,*/*;q=0.8',
       },
+      cache: 'no-store',
     });
 
-    if (!res.ok) {
-      return NextResponse.json({ error: 'Failed to fetch image' }, { status: 500 });
+    if (!res.ok || !res.body) {
+      console.error('Image fetch failed:', res.status, url);
+      return new NextResponse('Image fetch failed', { status: 502 });
     }
 
-    const buffer = await res.arrayBuffer();
-
-    return new NextResponse(Buffer.from(buffer), {
+    return new NextResponse(res.body, {
       headers: {
-        'Content-Type': res.headers.get('content-type') || 'image/jpeg',
+        'Content-Type': res.headers.get('content-type') || 'image/webp',
         'Cache-Control': 'public, max-age=86400',
       },
     });
   } catch (err) {
-    return NextResponse.json({ error: 'Failed to fetch image', details: err }, { status: 500 });
+    console.error('Proxy error:', err);
+    return new NextResponse('Proxy error', { status: 500 });
   }
 }

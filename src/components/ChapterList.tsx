@@ -73,7 +73,7 @@ export default function ChapterList({ chapters, title }: { chapters: any[]; titl
       <div className="flex gap-4 mb-4">
         {firstChapter && (
           <Link
-            href={`/read/${encodeURIComponent(firstChapter.id)}`}
+            href={`/read/${firstChapter.id}`}
             onClick={() => toggleRead(firstChapter.id)}
             className="flex-1 text-center bg-purple-600 hover:bg-purple-700 text-white font-bold p-3 rounded transition-all duration-300"
           >
@@ -110,7 +110,7 @@ export default function ChapterList({ chapters, title }: { chapters: any[]; titl
           return (
             <div key={ch.id} className="flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 p-3 rounded shadow-md text-white text-sm font-medium transition">
               <Link
-                href={`/read/${encodeURIComponent(ch.id)}`}
+                href={`/read/${ch.id}`}
                 onClick={() => toggleRead(ch.id)}
                 className={`flex-1 ${isRead ? "opacity-60 line-through" : ""}`}
               >

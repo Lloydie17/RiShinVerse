@@ -2,14 +2,14 @@ import ScrollUp from '@/components/ScrollUp';
 import api from '@/lib/api';
 
 async function getPages(chapterId: string) {
-  const decoded = decodeURIComponent(chapterId);
-  const res = await api.get('/manga/mangakakalot/read', { params: { chapterId: decoded } });
+  const res = await api.get('/manga/mangapill/read', { params: { chapterId } });
   return res.data;
 }
 
-export default async function ReaderPage({ params }: { params: Promise<{ chapterId: string }> }) {
+export default async function ReaderPage({ params }: { params: { chapterId: string[] }}) {
   const { chapterId } = await params;
-  const data = await getPages(chapterId);
+  const chapterIdStr = chapterId.join('/');
+  const data = await getPages(chapterIdStr);
 
   const pages =
     Array.isArray(data)

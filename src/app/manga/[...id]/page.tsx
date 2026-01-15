@@ -2,18 +2,21 @@ import api from '@/lib/api';
 import ChapterList from '@/components/ChapterList';
 import BookmarkButton from '@/components/BookmarkButton';
 
-async function getInfo(id: string) {
-    const decodedid = decodeURIComponent(id);
+async function getInfo(idParam: string | string[] ) {
+    const id = Array.isArray(idParam) ? idParam.join('/') : idParam;
+    const decodedId = decodeURIComponent(id);
 
-    const res = await api.get('/manga/mangakakalot/info', {
-        params: { id: decodedid },
+    const res = await api.get('/manga/mangapill/info', {
+        params: { id: decodedId },
     });
     return res.data;
 }
 
-export default async function MangaPage({ params }: { params: Promise<{ id: string }>; }) {
+export default async function MangaPage({ params }: { params: { id: string[] } }) {
   const { id } = await params;
-  const manga = await getInfo(id);
+  const mangaId = id.join('/');
+
+  const manga = await getInfo(mangaId);
 
   return (
     <div className="p-6">
@@ -64,5 +67,4 @@ export default async function MangaPage({ params }: { params: Promise<{ id: stri
       <ChapterList chapters={manga.chapters} title={manga.title} />
     </div>
   );
-
 }
